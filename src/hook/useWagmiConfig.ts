@@ -2,6 +2,7 @@ import { klaytnBaobab, polygonAmoy, sepolia } from "wagmi/chains";
 import { Connector, createConfig, CreateConnectorFn, http } from "wagmi";
 import { injected, metaMask, walletConnect } from "wagmi/connectors";
 import { useMemo } from "react";
+import { getConnections, getConnectors } from "wagmi/actions";
 
 export enum ConnectorType {
   MetaMask = "MetaMask",
@@ -53,12 +54,12 @@ export const useWagmiConfig = () => {
 
   const wagmiConfig = createConfig({
     chains: [klaytnBaobab, sepolia, polygonAmoy],
-    // connectors: [
-    //   customConnector()[ConnectorType.MetaMask],
-    //   customConnector()[ConnectorType.WalletConnect],
-    //   customConnector()[ConnectorType.Okx],
-    //   customConnector()[ConnectorType.Kaikas],
-    // ],
+    connectors: [
+      customConnector[ConnectorType.MetaMask],
+      customConnector[ConnectorType.WalletConnect],
+      customConnector[ConnectorType.Okx],
+      customConnector[ConnectorType.Kaikas],
+    ],
     transports: {
       [klaytnBaobab.id]: http("https://api.baobab.klaytn.net:8651"),
       [sepolia.id]: http("https://sepolia.dq.neopin.pmang.cloud"),
@@ -66,5 +67,15 @@ export const useWagmiConfig = () => {
     },
   });
 
-  return { wagmiConfig, connectors: customConnector };
+  const connectors = useMemo(() => {
+    const connectors = getConnectors(wagmiConfig);
+    return {
+      [ConnectorType.MetaMask]: connectors[0],
+      [ConnectorType.WalletConnect]: connectors[1],
+      [ConnectorType.Okx]: connectors[2],
+      [ConnectorType.Kaikas]: connectors[3],
+    };
+  }, [wagmiConfig]);
+
+  return { wagmiConfig, connectors: connectors };
 };
