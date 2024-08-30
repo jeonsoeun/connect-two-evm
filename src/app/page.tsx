@@ -1,20 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
 import { formatEther, GetBalanceParameters, parseEther } from "viem";
-import {
-  ConnectReturnType,
-  getConnectorClient,
-  getConnectors,
-  getPublicClient,
-  sendTransaction,
-} from "wagmi/actions";
+import { getPublicClient, sendTransaction } from "wagmi/actions";
 import { Config, Connector } from "wagmi";
 import { klaytnBaobab, sepolia } from "viem/chains";
 import { connect } from "@wagmi/core";
-import { ConnectorType, useWagmiConfig } from "@/hook/useWagmiConfig";
+import { connectors, ConnectorType, wagmiConfig } from "@/hook/wagmiConfig";
 
 export default function Home() {
-  const { wagmiConfig, connectors: customConnector } = useWagmiConfig();
   /** account 1 */
   const [connector1, setConnector1] = useState<Connector | undefined>(
     undefined
@@ -39,10 +32,10 @@ export default function Home() {
   const connectAccount1 = async (config: Config) => {
     const connector = await connect(config, {
       chainId: chain1.id,
-      connector: customConnector[ConnectorType.MetaMask],
+      connector: connectors[ConnectorType.MetaMask],
     });
     if (!connector) return undefined;
-    setConnector1(customConnector[ConnectorType.MetaMask]);
+    setConnector1(connectors[ConnectorType.MetaMask]);
     const account = await connector.accounts[0];
     setAccount1(account);
     console.log(account);
@@ -50,10 +43,10 @@ export default function Home() {
   const connectAccount2 = async (config: Config) => {
     const connector = await connect(config, {
       chainId: chain2.id,
-      connector: customConnector[ConnectorType.Okx],
+      connector: connectors[ConnectorType.Okx],
     });
     if (!connector) return undefined;
-    setConnector2(customConnector[ConnectorType.Okx]);
+    setConnector2(connectors[ConnectorType.Okx]);
     const account = await connector.accounts[0];
     setAccount2(account);
   };
