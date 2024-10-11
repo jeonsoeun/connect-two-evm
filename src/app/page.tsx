@@ -2,12 +2,13 @@
 import { useEffect, useState } from "react";
 import { formatEther, GetBalanceParameters, parseEther } from "viem";
 import { getPublicClient, sendTransaction } from "wagmi/actions";
-import { Config, Connector } from "wagmi";
+import { Config, Connector, useConnect, useConnectors } from "wagmi";
 import { klaytnBaobab, sepolia } from "viem/chains";
 import { connect } from "@wagmi/core";
-import { connectors, ConnectorType, wagmiConfig } from "@/hook/wagmiConfig";
+import { wagmiConfig } from "@/hook/wagmiConfig";
 
 export default function Home() {
+  const { connectors } = useConnect();
   /** account 1 */
   const [connector1, setConnector1] = useState<Connector | undefined>(
     undefined
@@ -30,24 +31,29 @@ export default function Home() {
   const chain1 = klaytnBaobab;
   const chain2 = sepolia;
   const connectAccount1 = async (config: Config) => {
-    const connector = await connect(config, {
-      chainId: chain1.id,
-      connector: connectors[ConnectorType.MetaMask],
-    });
+    const connector = connectors.find((v) => v.name === "MetaMask");
     if (!connector) return undefined;
-    setConnector1(connectors[ConnectorType.MetaMask]);
-    const account = await connector.accounts[0];
+    const connectedConnector = await connect(config, {
+      chainId: chain1.id,
+      connector: connector,
+    });
+    if (!connectedConnector) return undefined;
+    setConnector1(connector);
+    const account = await connectedConnector.accounts[0];
     setAccount1(account);
     console.log(account);
   };
   const connectAccount2 = async (config: Config) => {
-    const connector = await connect(config, {
-      chainId: chain2.id,
-      connector: connectors[ConnectorType.Okx],
-    });
+    const connector = connectors.find((v) => v.name === "OKX Wallet");
+    console.log(connectors, connector);
     if (!connector) return undefined;
-    setConnector2(connectors[ConnectorType.Okx]);
-    const account = await connector.accounts[0];
+    const connectedConnector = await connect(config, {
+      chainId: chain2.id,
+      connector: connector,
+    });
+    if (!connectedConnector) return undefined;
+    setConnector2(connector);
+    const account = await connectedConnector.accounts[0];
     setAccount2(account);
   };
 

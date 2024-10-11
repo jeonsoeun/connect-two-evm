@@ -18,10 +18,13 @@ const connectorConfig = {
   [ConnectorType.Okx]: injected({
     target() {
       return {
-        name: "OKX",
-        id: "okx",
         icon: "https://www.okx.com/okx-logo.svg",
-        provider: window.okxwallet,
+        id: "okxwallet",
+        name: "OKX Wallet",
+        provider: () => {
+          if (typeof window !== "undefined") return;
+          return window["okxwallet"] ?? null;
+        },
       };
     },
   }),
@@ -43,7 +46,7 @@ export const wagmiConfig = createConfig({
     connectorConfig[ConnectorType.MetaMask],
     connectorConfig[ConnectorType.WalletConnect],
     connectorConfig[ConnectorType.Okx],
-    connectorConfig[ConnectorType.Kaikas],
+    // connectorConfig[ConnectorType.Kaikas],
   ],
   transports: {
     [klaytnBaobab.id]: http("https://api.baobab.klaytn.net:8651"),
@@ -52,11 +55,11 @@ export const wagmiConfig = createConfig({
   },
 });
 
-const storedConnectors = getConnectors(wagmiConfig);
+// const storedConnectors = getConnectors(wagmiConfig);
 
-export const connectors = {
-  [ConnectorType.MetaMask]: storedConnectors[0],
-  [ConnectorType.WalletConnect]: storedConnectors[1],
-  [ConnectorType.Okx]: storedConnectors[2],
-  [ConnectorType.Kaikas]: storedConnectors[3],
-};
+// export const connectors = {
+//   [ConnectorType.MetaMask]: storedConnectors[0],
+//   [ConnectorType.WalletConnect]: storedConnectors[1],
+//   [ConnectorType.Okx]: storedConnectors[2],
+//   // [ConnectorType.Kaikas]: storedConnectors[3],
+// };
