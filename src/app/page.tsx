@@ -6,7 +6,7 @@ import { Config, Connector, useConnect, useConnectors } from "wagmi";
 import { klaytnBaobab, sepolia } from "viem/chains";
 import { connect } from "@wagmi/core";
 import { wagmiConfig } from "@/hook/wagmiConfig";
-
+// wagmi action으로 따로따로 로그인해봄.
 export default function Home() {
   const { connectors } = useConnect();
   /** account 1 */

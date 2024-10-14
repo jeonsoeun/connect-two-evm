@@ -21,9 +21,10 @@ const connectorConfig = {
         icon: "https://www.okx.com/okx-logo.svg",
         id: "okxwallet",
         name: "OKX Wallet",
-        provider: () => {
-          if (typeof window !== "undefined") return;
-          return window["okxwallet"] ?? null;
+        provider: (window) => {
+          if (typeof window !== "undefined") {
+            return (window as Window).okxwallet;
+          }
         },
       };
     },
@@ -34,7 +35,11 @@ const connectorConfig = {
         name: "Kaikas",
         id: "kaikas",
         icon: "https://lh3.googleusercontent.com/vQ4txSWDboUlo0L9Q0VBl-vx7lEkiphTm9W6eFZxmleN3JkZ9TEkvmtFdsSvMGVNXXaW3ofeZAh5r7bNfH4L2fHq1G4=s120",
-        provider: window.klaytn,
+        provider: (window) => {
+          if (typeof window !== "undefined") {
+            return (window as Window).klaytn;
+          }
+        },
       };
     },
   }),
